@@ -7,7 +7,7 @@ module.exports = {
   },
   addProfile: async (pool, animal) => {
     let sql = `
-      INSERT INTO profile (image, name, lastname, birthmark, description, birthday, gender, animal_type, address_id, owner_id) 
+      INSERT INTO profile (image, name, lastname, description, birthday, gender, birthmark, animal_type, address_id, owner_id) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     return await pool.query(sql, [

@@ -90,6 +90,14 @@ app.post("/api/addProfile", upload.single("image"), async (req, res) => {
       .json({ results: false, message: "Missing required fields" });
   }
 
+  const birthmarkNumber = Number(birthmark);
+  if (isNaN(birthmarkNumber)) {
+    console.log("🔴 Validation Failed: Birthmark is not a number");
+    return res
+      .status(400)
+      .json({ results: false, message: "Birthmark must be a number" });
+  }
+
   try {
     await animal.addProfile(pool, {
       image,
@@ -98,7 +106,7 @@ app.post("/api/addProfile", upload.single("image"), async (req, res) => {
       description: description || null,
       birthday,
       gender,
-      birthmark,
+      birthmark: birthmarkNumber,
       animal_type,
       address_id: address_id || null,
       owner_id: owner_id || null,
@@ -143,13 +151,11 @@ app.get("/api/profile/:id", async (req, res) => {
 
     res.json({ results: true, data: result[0] });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        results: false,
-        message: "Error fetching profile",
-        error: error.message,
-      });
+    res.status(500).json({
+      results: false,
+      message: "Error fetching profile",
+      error: error.message,
+    });
   }
 });
 
