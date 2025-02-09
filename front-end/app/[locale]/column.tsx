@@ -85,6 +85,11 @@ export function getColumns(): ColumnDef<Animal>[] {
       cell: ({ row }) => row.original.lastname || "N/A",
     },
     {
+      accessorKey: "description",
+      header: t("description"),
+      cell: ({ row }) => row.original.description || "N/A",
+    },
+    {
       accessorKey: "birthday",
       header: t("birthday"),
       cell: ({ row }) => new Date(row.original.birthday).toLocaleDateString(),
@@ -92,6 +97,10 @@ export function getColumns(): ColumnDef<Animal>[] {
     {
       accessorKey: "gender",
       header: t("gender"),
+    },
+    {
+      accessorKey: "birthmark",
+      header: t("birthmark"),
     },
     {
       accessorKey: "animal_type",
