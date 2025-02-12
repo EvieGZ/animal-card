@@ -31,7 +31,7 @@
   "You won't be able to revert this": "หากลบแล้วไม่สามารถย้อนกลับได้!",
   "Yes, delete it": "ใช่, ลบออกเลย!",
   "Cancel": "ยกเลิก",
-  "Deleted!": "ลบเรียบร้อยแล้ว!",
+  "Deleted": "ลบเรียบร้อยแล้ว!",
   "Profile has been deleted": "ข้อมูลถูกลบเรียบร้อยแล้ว",
   "Error!": "พบข้อผิดพลาด!",
   "Failed to delete profile: ": "ไม่สามารถลบข้อมูลได้: ",
@@ -67,6 +67,8 @@
   "profile_updated": "อัพเดทโปรไฟล์สัตว์เลี้ยงสำเร็จ!",
   "profile_added": "เพิ่มโปรไฟล์สัตว์เลี้ยงสำเร็จ!",
   "birthmark": "รอยปาน",
-  "Birthmark must be a positive number": "รอยปานต้องเป็นตัวเลขบวกเท่านั้น"
+  "Birthmark must be a positive number": "รอยปานต้องเป็นตัวเลขบวกเท่านั้น",
+  "Image_required": "กรุณาอัพโหลดรูปภาพ",
+  "Complete_required": "กรุณาใส่ข้อมูลที่ต้องกรอกให้ครบถ้วนเพื่อไปยังขั้นต่อไป"
 
 }

@@ -19,10 +19,10 @@ export default function MultiStepForm() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{ birthmark?: string }>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState<addProfile>({
-    image: null, // Image will be stored as a File object
+    image: null,
     name: "",
     lastname: "",
     description: "",
@@ -36,7 +36,6 @@ export default function MultiStepForm() {
 
   const t = useTranslations();
 
-  // Load saved form data from localStorage (excluding image)
   useEffect(() => {
     const savedData = localStorage.getItem("multiStepFormData");
     if (savedData) {
@@ -45,53 +44,72 @@ export default function MultiStepForm() {
     }
   }, []);
 
-  // Auto-save form data (excluding image) to localStorage
   useEffect(() => {
     const { image, ...dataToSave } = formData;
     localStorage.setItem("multiStepFormData", JSON.stringify(dataToSave));
   }, [formData]);
 
-  // Handle form input change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  // Handle image file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFormData({ ...formData, image: e.target.files[0] });
+      setErrors({ ...errors, image: "" });
     }
   };
 
-  const nextStep = () => setStep((prev) => prev + 1);
+  const validateStep = () => {
+    let newErrors: Record<string, string> = {};
+
+    if (step === 1) {
+      if (!formData.name) newErrors.name = t("Name_required");
+    }
+    if (step === 2) {
+      if (!formData.birthday) newErrors.birthday = t("Birthday_required");
+      if (!formData.gender) newErrors.gender = t("Gender_required");
+      if (formData.birthmark < 0)
+        newErrors.birthmark = t("Birthmark must be a positive number");
+    }
+    if (step === 3) {
+      if (!formData.animal_type)
+        newErrors.animal_type = t("Animal_type_required");
+      if (!formData.image) newErrors.image = t("Image_required");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const nextStep = () => {
+    if (validateStep()) {
+      setStep((prev) => prev + 1);
+    }
+  };
+
   const prevStep = () => setStep((prev) => prev - 1);
 
-  // Submit form to API
   const handleSubmit = async () => {
-    // Validate birthmark
-    if (formData.birthmark < 0) {
-      setErrors({ birthmark: t("Birthmark must be a positive number") });
-      return;
-    } else {
-      setErrors({});
-    }
+    if (!validateStep()) return;
 
     setLoading(true);
     setMessage(null);
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("lastname", formData.lastname || ""); // Allow null
-      formDataToSend.append("description", formData.description || ""); // Allow null
-      formDataToSend.append("birthday", formData.birthday);
-      formDataToSend.append("gender", formData.gender);
-      formDataToSend.append("birthmark", formData.birthmark.toString());
-      formDataToSend.append("animal_type", formData.animal_type);
-      formDataToSend.append("address_id", formData.address_id || ""); // Allow null
-      formDataToSend.append("owner_id", formData.owner_id || ""); // Allow null
+      Object.keys(formData).forEach((key) => {
+        if (key !== "image") {
+          const value = formData[key as keyof addProfile];
+          formDataToSend.append(
+            key,
+            typeof value === "number" ? value.toString() : value || ""
+          );
+        }
+      });
       if (formData.image) {
         formDataToSend.append("image", formData.image);
       }
@@ -106,8 +124,8 @@ export default function MultiStepForm() {
       if (result.results) {
         resetForm();
         Swal.fire({
-          title: `${t("Success")}`,
-          text: `${t("profile_added")}`,
+          title: t("Success"),
+          text: t("profile_added"),
           icon: "success",
           timer: 2000,
           showConfirmButton: false,
@@ -124,7 +142,6 @@ export default function MultiStepForm() {
     }
   };
 
-  // Reset form and clear localStorage
   const resetForm = () => {
     setFormData({
       image: null,
@@ -164,6 +181,9 @@ export default function MultiStepForm() {
               {t("Step")} {step} {t("of")} 4
             </DialogTitle>
           </DialogHeader>
+          <p className="text-sm text-red-500">
+            {t("Complete_required")}
+          </p>
 
           {/* Step 1 - Basic Info */}
           {step === 1 && (

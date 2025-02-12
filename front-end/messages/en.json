@@ -67,5 +67,7 @@
   "profile_updated": "Profile pet updated successfully!",
   "profile_added": "Profile pet added successfully!",
   "birthmark": "Birthmark",
-  "Birthmark must be a positive number": "Birthmark must be a positive number."
+  "Birthmark must be a positive number": "Birthmark must be a positive number.",
+  "Image_required": "Image upload is required.",
+  "Complete_required": "Complete the required fields to proceed."
 }

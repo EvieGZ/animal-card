@@ -35,7 +35,7 @@ export function getColumns(): ColumnDef<Animal>[] {
 
           if (result.results) {
             Swal.fire(
-              t("Deleted!"),
+              t("Deleted"),
               t("Profile has been deleted"),
               "success"
             ).then(() => {
