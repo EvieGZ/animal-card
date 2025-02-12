@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
-import { addProfile } from "@/types/profile";
+import { editProfile } from "@/types/profile";
 import Swal from "sweetalert2";
 
 export default function EditProfileForm({
@@ -28,8 +28,8 @@ export default function EditProfileForm({
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const [formData, setFormData] = useState<addProfile>({
-    image: null,
+  const [formData, setFormData] = useState<editProfile>({
+    image: "",
     name: "",
     lastname: "",
     description: "",
@@ -50,8 +50,9 @@ export default function EditProfileForm({
         .then((res) => res.json())
         .then((data) => {
           if (data.results) {
-            setFormData({
-              image: data.data.image || null,
+            setFormData((prev) => ({
+              ...prev,
+              image: data.data.image || prev.image,
               name: data.data.name || "",
               lastname: data.data.lastname || "",
               description: data.data.description || "",
@@ -63,7 +64,7 @@ export default function EditProfileForm({
               animal_type: data.data.animal_type || "",
               address_id: data.data.address_id || "",
               owner_id: data.data.owner_id || "",
-            });
+            }));
           } else {
             setMessage("Profile not found.");
           }
@@ -134,13 +135,15 @@ export default function EditProfileForm({
       formDataToSend.append("description", formData.description || "");
       formDataToSend.append("birthday", formData.birthday);
       formDataToSend.append("gender", formData.gender);
-        formDataToSend.append("birthmark", String(formData.birthmark));
+      formDataToSend.append("birthmark", String(formData.birthmark));
       formDataToSend.append("animal_type", formData.animal_type);
       formDataToSend.append("address_id", formData.address_id || "");
       formDataToSend.append("owner_id", formData.owner_id || "");
 
       if (formData.image && typeof formData.image !== "string") {
         formDataToSend.append("image", formData.image);
+      } else if (typeof formData.image === "string") {
+        formDataToSend.append("existingImage", formData.image); // Send existing image name
       }
 
       const response = await fetch(
@@ -334,17 +337,9 @@ export default function EditProfileForm({
 
             <h2 className="mb-2 mt-4">
               {t("Upload_pet_image")}
-              <span className="text-red-500">*</span> :
+              {formData.image ? "" : <span className="text-red-500">*</span>} :
             </h2>
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="mb-4"
-            />
-
-            {/* Display existing image or new preview */}
             {formData.image && (
               <img
                 src={
@@ -356,6 +351,14 @@ export default function EditProfileForm({
                 className="w-24 h-24 object-cover rounded mt-2"
               />
             )}
+
+            {/* Allow new file selection without removing the old image */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="mt-2"
+            />
           </div>
         )}
 

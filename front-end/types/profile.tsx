@@ -24,3 +24,16 @@ export interface Animal {
     address_id: string;
     owner_id: string;
   };
+
+  export interface editProfile  {
+    image: File | null | string;
+    name: string;
+    lastname: string;
+    description: string;
+    birthday: string;
+    gender: string;
+    birthmark : number;
+    animal_type: string;
+    address_id: string;
+    owner_id: string;
+  };

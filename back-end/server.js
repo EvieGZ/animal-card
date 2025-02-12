@@ -189,8 +189,10 @@ app.put("/api/editProfile/:id", upload.single("image"), async (req, res) => {
     animal_type,
     address_id,
     owner_id,
-    existingImage,
+    existingImage, // This must be sent from the frontend when no new image is uploaded
   } = req.body;
+
+  // Check if a new image was uploaded, otherwise retain existing image
   const image = req.file ? req.file.filename : existingImage;
 
   try {
